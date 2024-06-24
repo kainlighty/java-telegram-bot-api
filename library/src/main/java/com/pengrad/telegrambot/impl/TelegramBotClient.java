@@ -18,6 +18,7 @@ import okhttp3.Response;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,7 +29,7 @@ public class TelegramBotClient {
 
     private final OkHttpClient client;
     private OkHttpClient clientWithTimeout;
-    private final Gson gson;
+    protected final Gson gson;
     private final String baseUrl;
 
     public TelegramBotClient(OkHttpClient client, Gson gson, String baseUrl) {
@@ -81,11 +82,28 @@ public class TelegramBotClient {
         }
     }
 
+    public <T extends BaseRequest<T, R>, R extends BaseResponse> CompletableFuture<R> sendAsync(final BaseRequest<T, R> request) {
+        CompletableFuture<R> completableFuture = new CompletableFuture<>();
+        OkHttpClient client = getOkHttpClient(request);
+        client.newCall(createRequest(request)).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                completableFuture.completeExceptionally(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                completableFuture.complete(getGSON().fromJson(response.body().string(), request.getResponseType()));
+            }
+        });
+        return completableFuture;
+    }
+
     public void shutdown() {
         client.dispatcher().executorService().shutdown();
     }
 
-    private OkHttpClient getOkHttpClient(BaseRequest<?, ?> request) {
+    protected OkHttpClient getOkHttpClient(BaseRequest<?, ?> request) {
         int timeoutMillis = request.getTimeoutSeconds() * 1000;
 
         if (client.readTimeoutMillis() == 0 || client.readTimeoutMillis() > timeoutMillis) return client;
@@ -95,7 +113,11 @@ public class TelegramBotClient {
         return clientWithTimeout;
     }
 
-    private Request createRequest(BaseRequest<?, ?> request) {
+    protected Gson getGSON() {
+        return gson;
+    }
+
+    protected Request createRequest(BaseRequest<?, ?> request) {
         return new Request.Builder()
                 .url(baseUrl + request.getMethod())
                 .post(createRequestBody(request))

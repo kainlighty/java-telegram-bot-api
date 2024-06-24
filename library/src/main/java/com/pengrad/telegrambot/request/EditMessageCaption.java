@@ -1,5 +1,6 @@
 package com.pengrad.telegrambot.request;
 
+import com.pengrad.telegrambot.annotations.kainlight;
 import com.pengrad.telegrambot.model.MessageEntity;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.ParseMode;
@@ -20,6 +21,10 @@ public class EditMessageCaption extends BaseRequest<EditMessageCaption, BaseResp
     public EditMessageCaption(String inlineMessageId) {
         super(BaseResponse.class);
         add("inline_message_id", inlineMessageId);
+    }
+
+    @kainlight public EditMessageCaption businessConnectionId(String businessConnectionId) {
+        return this.add("business_connection_id", businessConnectionId);
     }
 
     public EditMessageCaption caption(String caption) {

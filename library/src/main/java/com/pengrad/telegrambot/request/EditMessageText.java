@@ -1,5 +1,6 @@
 package com.pengrad.telegrambot.request;
 
+import com.pengrad.telegrambot.annotations.kainlight;
 import com.pengrad.telegrambot.model.LinkPreviewOptions;
 import com.pengrad.telegrambot.model.MessageEntity;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
@@ -44,6 +45,10 @@ public class EditMessageText extends BaseRequest<EditMessageText, BaseResponse> 
 
     public EditMessageText replyMarkup(InlineKeyboardMarkup replyMarkup) {
         return add("reply_markup", replyMarkup);
+    }
+
+    @kainlight public EditMessageText businessConnectionId(String businessConnectionId) {
+        return this.add("business_connection_id", businessConnectionId);
     }
 
 }

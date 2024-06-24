@@ -7,6 +7,10 @@ plugins {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+kotlin {
+    jvmToolchain(8)
+}
+
 dependencies {
     api 'com.google.code.gson:gson:2.10.1'
     api 'com.squareup.okhttp3:okhttp:4.12.0'
@@ -28,30 +32,10 @@ jacoco {
     toolVersion = "0.8.12"
 }
 
-jacocoTestReport {
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
-}
-
 javadoc {
     options.encoding = 'UTF-8'
 }
 
-test {
-    if (project.hasProperty('excludeTests')) {
-        exclude project.property('excludeTests')
-    }
-    if (project.hasProperty('prTest')) {
-        // TODO move "functional" tests into specific dir and exclude it
-        exclude '**/Base64Test.class'
-        exclude '**/CheckTelegramAuthTest.class'
-        exclude '**/PaymentsTest.class'
-        exclude '**/TelegramBotTest.class'
-        exclude '**/UpdatesListenerTest.class'
-    }
-}
 
 tasks.withType(Test).configureEach {
     testLogging {

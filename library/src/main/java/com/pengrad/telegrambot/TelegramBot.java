@@ -1,10 +1,12 @@
 package com.pengrad.telegrambot;
 
 import com.google.gson.Gson;
+import com.pengrad.telegrambot.annotations.kainlight;
 import com.pengrad.telegrambot.impl.FileApi;
 import com.pengrad.telegrambot.impl.TelegramBotClient;
 import com.pengrad.telegrambot.impl.UpdatesHandler;
 import com.pengrad.telegrambot.model.File;
+import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.GetUpdates;
 import com.pengrad.telegrambot.response.BaseResponse;
@@ -17,7 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * Stas Parshin
@@ -26,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 public class TelegramBot {
 
     private final String token;
-    private final TelegramBotClient api;
+    protected final TelegramBotClient api;
     private final FileApi fileApi;
     private final UpdatesHandler updatesHandler;
 
@@ -49,8 +53,17 @@ public class TelegramBot {
         return api.send(request, callback);
     }
 
+    @kainlight
+    public <T extends BaseRequest<T, R>, R extends BaseResponse> CompletableFuture<R> executeAsync(BaseRequest<T, R> request) {
+        return api.sendAsync(request);
+    }
+
     public String getToken() {
         return token;
+    }
+
+    public TelegramBotClient getAPI() {
+        return api;
     }
 
     public String getFullFilePath(File file) {
@@ -80,6 +93,32 @@ public class TelegramBot {
     public void setUpdatesListener(UpdatesListener listener, ExceptionHandler exceptionHandler, GetUpdates request) {
         updatesHandler.stop();
         updatesHandler.start(this, listener, exceptionHandler, request);
+    }
+
+    @kainlight
+    public void setDefaultUpdatesListener(Consumer<Update> u, Boolean errorInterception) {
+        this.setUpdatesListener(updates -> {
+            updates.forEach(update -> {
+                if(errorInterception) {
+                    try {
+                        u.accept(update);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else u.accept(update);
+            });
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        }, e -> {
+            if (e.response() != null) {
+                // bad response from telegram
+                System.err.println("Description: " + e.response().description() + " with error code: " + e.response().errorCode());
+                return;
+            } else {
+                /* probably network error */
+                e.printStackTrace();
+                return;
+            }
+        });
     }
 
     public void removeGetUpdatesListener() {

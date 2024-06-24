@@ -1,5 +1,6 @@
 package com.pengrad.telegrambot.model;
 
+import com.pengrad.telegrambot.annotations.kainlight;
 import com.pengrad.telegrambot.model.business.BusinessConnection;
 import com.pengrad.telegrambot.model.chatbackground.ChatBackground;
 import com.pengrad.telegrambot.model.chatboost.ChatBoostAdded;
@@ -25,6 +26,7 @@ public class Message extends MaybeInaccessibleMessage implements Serializable {
     private Integer sender_boost_count;
     private User sender_business_bot;
     private BusinessConnection business_connection;
+    @kainlight private String business_connection_id;
     private MessageOrigin forward_origin;
     private Boolean is_topic_message;
     private Boolean is_automatic_forward;
@@ -120,6 +122,10 @@ public class Message extends MaybeInaccessibleMessage implements Serializable {
 
     public BusinessConnection businessConnection() {
         return business_connection;
+    }
+
+    @kainlight public String businessConnectionId() {
+        return business_connection_id;
     }
 
     public MessageOrigin forwardOrigin() {
@@ -254,6 +260,10 @@ public class Message extends MaybeInaccessibleMessage implements Serializable {
 
     public String text() {
         return text;
+    }
+
+    @kainlight public String[] args() {
+        return text.split(" ");
     }
 
     public MessageEntity[] entities() {
@@ -509,106 +519,26 @@ public class Message extends MaybeInaccessibleMessage implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Message message = (Message) o;
-        return Objects.equals(message_id, message.message_id) &&
-                Objects.equals(message_thread_id , message.message_thread_id ) &&
-                Objects.equals(from, message.from) &&
-                Objects.equals(sender_chat, message.sender_chat) &&
-                Objects.equals(sender_boost_count, message.sender_boost_count) &&
-                Objects.equals(date, message.date) &&
-                Objects.equals(sender_business_bot, message.sender_business_bot) &&
-                Objects.equals(business_connection, message.business_connection) &&
-                Objects.equals(chat, message.chat) &&
-                Objects.equals(forward_origin, message.forward_origin) &&
-                Objects.equals(is_topic_message, message.is_topic_message) &&
-                Objects.equals(is_automatic_forward, message.is_automatic_forward) &&
-                Objects.equals(reply_to_message, message.reply_to_message) &&
-                Objects.equals(external_reply, message.external_reply) &&
-                Objects.equals(quote, message.quote) &&
-                Objects.equals(reply_to_story, message.reply_to_story) &&
-                Objects.equals(via_bot, message.via_bot) &&
-                Objects.equals(edit_date, message.edit_date) &&
-                Objects.equals(has_protected_content, message.has_protected_content) &&
-                Objects.equals(is_from_offline, message.is_from_offline) &&
-                Objects.equals(has_media_spoiler, message.has_media_spoiler) &&
-                Objects.equals(media_group_id, message.media_group_id) &&
-                Objects.equals(author_signature, message.author_signature) &&
-                Objects.equals(text, message.text) &&
-                Arrays.equals(entities, message.entities) &&
-                Arrays.equals(caption_entities, message.caption_entities) &&
-                Objects.equals(show_caption_above_media, message.show_caption_above_media) &&
-                Objects.equals(link_preview_options, message.link_preview_options) &&
-                Objects.equals(effect_id, message.effect_id) &&
-                Objects.equals(audio, message.audio) &&
-                Objects.equals(document, message.document) &&
-                Objects.equals(animation, message.animation) &&
-                Objects.equals(game, message.game) &&
-                Arrays.equals(photo, message.photo) &&
-                Objects.equals(sticker, message.sticker) &&
-                Objects.equals(video, message.video) &&
-                Objects.equals(voice, message.voice) &&
-                Objects.equals(video_note, message.video_note) &&
-                Objects.equals(caption, message.caption) &&
-                Objects.equals(contact, message.contact) &&
-                Objects.equals(location, message.location) &&
-                Objects.equals(venue, message.venue) &&
-                Objects.equals(poll, message.poll) &&
-                Objects.equals(dice, message.dice) &&
-                Arrays.equals(new_chat_members, message.new_chat_members) &&
-                Objects.equals(left_chat_member, message.left_chat_member) &&
-                Objects.equals(new_chat_title, message.new_chat_title) &&
-                Arrays.equals(new_chat_photo, message.new_chat_photo) &&
-                Objects.equals(delete_chat_photo, message.delete_chat_photo) &&
-                Objects.equals(group_chat_created, message.group_chat_created) &&
-                Objects.equals(supergroup_chat_created, message.supergroup_chat_created) &&
-                Objects.equals(channel_chat_created, message.channel_chat_created) &&
-                Objects.equals(message_auto_delete_timer_changed, message.message_auto_delete_timer_changed) &&
-                Objects.equals(migrate_to_chat_id, message.migrate_to_chat_id) &&
-                Objects.equals(migrate_from_chat_id, message.migrate_from_chat_id) &&
-                Objects.equals(pinned_message, message.pinned_message) &&
-                Objects.equals(invoice, message.invoice) &&
-                Objects.equals(successful_payment, message.successful_payment) &&
-                Objects.equals(story, message.story) &&
-                Objects.equals(user_shared, message.user_shared) &&
-                Objects.equals(users_shared, message.users_shared) &&
-                Objects.equals(chat_shared, message.chat_shared) &&
-                Objects.equals(connected_website, message.connected_website) &&
-                Objects.equals(passport_data, message.passport_data) &&
-                Objects.equals(proximity_alert_triggered, message.proximity_alert_triggered) &&
-                Objects.equals(boost_added, message.boost_added) &&
-                Objects.equals(chat_background_set, message.chat_background_set) &&
-                Objects.equals(forum_topic_created, message.forum_topic_created) &&
-                Objects.equals(forum_topic_edited, message.forum_topic_edited) &&
-                Objects.equals(forum_topic_closed, message.forum_topic_closed) &&
-                Objects.equals(forum_topic_reopened, message.forum_topic_reopened) &&
-                Objects.equals(general_forum_topic_hidden, message.general_forum_topic_hidden) &&
-                Objects.equals(general_forum_topic_unhidden, message.general_forum_topic_unhidden) &&
-                Objects.equals(write_access_allowed, message.write_access_allowed) &&
-                Objects.equals(video_chat_started, message.video_chat_started) &&
-                Objects.equals(video_chat_ended, message.video_chat_ended) &&
-                Objects.equals(video_chat_participants_invited, message.video_chat_participants_invited) &&
-                Objects.equals(video_chat_scheduled, message.video_chat_scheduled) &&
-                Objects.equals(reply_markup, message.reply_markup) &&
-                Objects.equals(web_app_data, message.web_app_data);
+        return Objects.equals(message_thread_id, message.message_thread_id) && Objects.equals(from, message.from) && Objects.equals(sender_chat, message.sender_chat) && Objects.equals(sender_boost_count, message.sender_boost_count) && Objects.equals(sender_business_bot, message.sender_business_bot) && Objects.equals(business_connection, message.business_connection) && Objects.equals(business_connection_id, message.business_connection_id) && Objects.equals(forward_origin, message.forward_origin) && Objects.equals(is_topic_message, message.is_topic_message) && Objects.equals(is_automatic_forward, message.is_automatic_forward) && Objects.equals(reply_to_message, message.reply_to_message) && Objects.equals(external_reply, message.external_reply) && Objects.equals(quote, message.quote) && Objects.equals(reply_to_story, message.reply_to_story) && Objects.equals(via_bot, message.via_bot) && Objects.equals(edit_date, message.edit_date) && Objects.equals(has_protected_content, message.has_protected_content) && Objects.equals(is_from_offline, message.is_from_offline) && Objects.equals(has_media_spoiler, message.has_media_spoiler) && Objects.equals(media_group_id, message.media_group_id) && Objects.equals(author_signature, message.author_signature) && Objects.equals(text, message.text) && Objects.deepEquals(entities, message.entities) && Objects.deepEquals(caption_entities, message.caption_entities) && Objects.equals(show_caption_above_media, message.show_caption_above_media) && Objects.equals(link_preview_options, message.link_preview_options) && Objects.equals(effect_id, message.effect_id) && Objects.equals(audio, message.audio) && Objects.equals(document, message.document) && Objects.equals(animation, message.animation) && Objects.equals(game, message.game) && Objects.deepEquals(photo, message.photo) && Objects.equals(sticker, message.sticker) && Objects.equals(video, message.video) && Objects.equals(voice, message.voice) && Objects.equals(video_note, message.video_note) && Objects.equals(caption, message.caption) && Objects.equals(contact, message.contact) && Objects.equals(location, message.location) && Objects.equals(venue, message.venue) && Objects.equals(poll, message.poll) && Objects.equals(dice, message.dice) && Objects.deepEquals(new_chat_members, message.new_chat_members) && Objects.equals(left_chat_member, message.left_chat_member) && Objects.equals(new_chat_title, message.new_chat_title) && Objects.deepEquals(new_chat_photo, message.new_chat_photo) && Objects.equals(delete_chat_photo, message.delete_chat_photo) && Objects.equals(group_chat_created, message.group_chat_created) && Objects.equals(supergroup_chat_created, message.supergroup_chat_created) && Objects.equals(channel_chat_created, message.channel_chat_created) && Objects.equals(message_auto_delete_timer_changed, message.message_auto_delete_timer_changed) && Objects.equals(migrate_to_chat_id, message.migrate_to_chat_id) && Objects.equals(migrate_from_chat_id, message.migrate_from_chat_id) && Objects.equals(pinned_message, message.pinned_message) && Objects.equals(invoice, message.invoice) && Objects.equals(successful_payment, message.successful_payment) && Objects.equals(story, message.story) && Objects.equals(user_shared, message.user_shared) && Objects.equals(users_shared, message.users_shared) && Objects.equals(chat_shared, message.chat_shared) && Objects.equals(connected_website, message.connected_website) && Objects.equals(passport_data, message.passport_data) && Objects.equals(proximity_alert_triggered, message.proximity_alert_triggered) && Objects.equals(boost_added, message.boost_added) && Objects.equals(chat_background_set, message.chat_background_set) && Objects.equals(forum_topic_created, message.forum_topic_created) && Objects.equals(forum_topic_edited, message.forum_topic_edited) && Objects.equals(forum_topic_closed, message.forum_topic_closed) && Objects.equals(forum_topic_reopened, message.forum_topic_reopened) && Objects.equals(general_forum_topic_hidden, message.general_forum_topic_hidden) && Objects.equals(general_forum_topic_unhidden, message.general_forum_topic_unhidden) && Objects.equals(write_access_allowed, message.write_access_allowed) && Objects.equals(video_chat_started, message.video_chat_started) && Objects.equals(video_chat_ended, message.video_chat_ended) && Objects.equals(video_chat_participants_invited, message.video_chat_participants_invited) && Objects.equals(video_chat_scheduled, message.video_chat_scheduled) && Objects.equals(reply_markup, message.reply_markup) && Objects.equals(web_app_data, message.web_app_data);
     }
 
     @Override
     public int hashCode() {
-        return message_id != null ? message_id.hashCode() : 0;
+        return Objects.hash(super.hashCode(), message_thread_id, from, sender_chat, sender_boost_count, sender_business_bot, business_connection, business_connection_id, forward_origin, is_topic_message, is_automatic_forward, reply_to_message, external_reply, quote, reply_to_story, via_bot, edit_date, has_protected_content, is_from_offline, has_media_spoiler, media_group_id, author_signature, text, Arrays.hashCode(entities), Arrays.hashCode(caption_entities), show_caption_above_media, link_preview_options, effect_id, audio, document, animation, game, Arrays.hashCode(photo), sticker, video, voice, video_note, caption, contact, location, venue, poll, dice, Arrays.hashCode(new_chat_members), left_chat_member, new_chat_title, Arrays.hashCode(new_chat_photo), delete_chat_photo, group_chat_created, supergroup_chat_created, channel_chat_created, message_auto_delete_timer_changed, migrate_to_chat_id, migrate_from_chat_id, pinned_message, invoice, successful_payment, story, user_shared, users_shared, chat_shared, connected_website, passport_data, proximity_alert_triggered, boost_added, chat_background_set, forum_topic_created, forum_topic_edited, forum_topic_closed, forum_topic_reopened, general_forum_topic_hidden, general_forum_topic_unhidden, write_access_allowed, video_chat_started, video_chat_ended, video_chat_participants_invited, video_chat_scheduled, reply_markup, web_app_data);
     }
 
     @Override
     public String toString() {
         return "Message{" +
-                "message_id=" + message_id +
-                ", message_thread_id=" + message_thread_id +
+                "message_thread_id=" + message_thread_id +
                 ", from=" + from +
                 ", sender_chat=" + sender_chat +
                 ", sender_boost_count=" + sender_boost_count +
-                ", date=" + date +
                 ", sender_business_bot=" + sender_business_bot +
                 ", business_connection=" + business_connection +
-                ", chat=" + chat +
+                ", business_connection_id='" + business_connection_id + '\'' +
                 ", forward_origin=" + forward_origin +
                 ", is_topic_message=" + is_topic_message +
                 ", is_automatic_forward=" + is_automatic_forward +
@@ -618,9 +548,9 @@ public class Message extends MaybeInaccessibleMessage implements Serializable {
                 ", reply_to_story=" + reply_to_story +
                 ", via_bot=" + via_bot +
                 ", edit_date=" + edit_date +
-                ", has_protected_content=" + has_protected_content+
+                ", has_protected_content=" + has_protected_content +
                 ", is_from_offline=" + is_from_offline +
-                ", has_media_spoiler=" + has_media_spoiler+
+                ", has_media_spoiler=" + has_media_spoiler +
                 ", media_group_id='" + media_group_id + '\'' +
                 ", author_signature='" + author_signature + '\'' +
                 ", text='" + text + '\'' +
@@ -628,7 +558,7 @@ public class Message extends MaybeInaccessibleMessage implements Serializable {
                 ", caption_entities=" + Arrays.toString(caption_entities) +
                 ", show_caption_above_media=" + show_caption_above_media +
                 ", link_preview_options=" + link_preview_options +
-                ", effect_id=" + effect_id +
+                ", effect_id='" + effect_id + '\'' +
                 ", audio=" + audio +
                 ", document=" + document +
                 ", animation=" + animation +
